@@ -1,14 +1,18 @@
-from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, generics, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from course.models import Course, Lessons
-from course.permissions import IsModer, IsOwner
+from course.models import Course, Lessons, Subscription
+from course.paginators import CourseLessonPaginator
+from course.permissions import IsModer, IsOwner, CanDeleteLesson
 from course.serializers import CourseSerializer, LessonsSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = CourseLessonPaginator
 
     def get_permissions(self):
         if self.action == 'create':
@@ -29,6 +33,11 @@ class CourseViewSet(viewsets.ModelViewSet):
             return Course.objects.all()
         return Course.objects.filter(owner=self.request.user)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({'request': self.request})
+        return context
+
 
 class LessonsCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonsSerializer
@@ -41,6 +50,7 @@ class LessonsCreateAPIView(generics.CreateAPIView):
 class LessonsListAPIView(generics.ListAPIView):
     serializer_class = LessonsSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CourseLessonPaginator
 
     def get_queryset(self):
         if self.request.user.groups.filter(name="moderators").exists():
@@ -62,4 +72,38 @@ class LessonsUpdateAPIView(generics.UpdateAPIView):
 
 class LessonsDestroyAPIView(generics.DestroyAPIView):
     queryset = Lessons.objects.all()
-    permission_classes = [IsAuthenticated, ~IsModer, IsOwner]
+    permission_classes = [CanDeleteLesson]
+
+
+
+class SubscriptionAPIView(APIView):
+    """Контроллер управления подписками на курсы"""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data.get('course_id')
+        if course_id is None:
+            return Response(
+                {"error": "course_id обязателен"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            course_item = Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return Response(
+                {"error": "Курс с указанным ID не существует"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+
+        if subs_item.exists():
+            subs_item.delete()
+            message = 'подписка удалена'
+        else:
+            Subscription.objects.create(user=user, course=course_item)
+            message = 'подписка добавлена'
+
+        return Response({"message": message})

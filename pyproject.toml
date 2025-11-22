@@ -15,7 +15,8 @@ dependencies = [
     "django (>=5.2.7,<6.0.0)",
     "ipython (>=9.6.0,<10.0.0)",
     "django-filter (>=25.2,<26.0)",
-    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)"
+    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
+    "coverage (>=7.12.0,<8.0.0)"
 ]
 
 [tool.poetry]
