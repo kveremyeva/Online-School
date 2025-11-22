@@ -29,12 +29,14 @@ class Payment(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
-    date_pay = models.DateTimeField(verbose_name='Дата оплаты')
+    date_pay = models.DateTimeField(verbose_name='Дата оплаты',  auto_now_add=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     lessons = models.ForeignKey(Lessons, on_delete=models.CASCADE, blank=True, null=True)
     amount_pay = models.PositiveIntegerField(verbose_name='Сумма оплаты')
     method_pay = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES,
                                      verbose_name='Способ оплаты')
+    session_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID сессии')
+    url = models.URLField(max_length=400, blank=True, null=True, verbose_name='Ссылка на оплату')
 
 
     def __str__(self):
