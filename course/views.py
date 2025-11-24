@@ -10,6 +10,7 @@ from course.serializers import CourseSerializer, LessonsSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
+    """ Viewset для курсов"""
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     pagination_class = CourseLessonPaginator
@@ -29,6 +30,8 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Course.objects.none()
         if self.request.user.groups.filter(name="moderators").exists():
             return Course.objects.all()
         return Course.objects.filter(owner=self.request.user)
@@ -40,6 +43,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class LessonsCreateAPIView(generics.CreateAPIView):
+    """ Создание уроков"""
     serializer_class = LessonsSerializer
     permission_classes = [IsAuthenticated, ~IsModer]
 
@@ -48,29 +52,35 @@ class LessonsCreateAPIView(generics.CreateAPIView):
 
 
 class LessonsListAPIView(generics.ListAPIView):
+    """ Список уроков"""
     serializer_class = LessonsSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CourseLessonPaginator
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Lessons.objects.none()
         if self.request.user.groups.filter(name="moderators").exists():
             return Lessons.objects.all()
         return Lessons.objects.filter(owner=self.request.user)
 
 
 class LessonsRetrieveAPIView(generics.RetrieveAPIView):
+    """ Извлечение уроков"""
     serializer_class = LessonsSerializer
     queryset = Lessons.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
 
 class LessonsUpdateAPIView(generics.UpdateAPIView):
+    """ Обновление уроков"""
     serializer_class = LessonsSerializer
     queryset = Lessons.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
 
 class LessonsDestroyAPIView(generics.DestroyAPIView):
+    """ Удаление уроков"""
     queryset = Lessons.objects.all()
     permission_classes = [CanDeleteLesson]
 
