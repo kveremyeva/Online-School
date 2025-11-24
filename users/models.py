@@ -36,7 +36,7 @@ class Payment(models.Model):
     method_pay = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES,
                                      verbose_name='Способ оплаты')
     session_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID сессии')
-    url = models.URLField(max_length=400, blank=True, null=True, verbose_name='Ссылка на оплату')
+    url = models.URLField(max_length=500, blank=True, null=True, verbose_name='Ссылка на оплату')
 
 
     def __str__(self):

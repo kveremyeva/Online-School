@@ -9,8 +9,7 @@ def create_stripe_product(content_object):
         name=content_object.name,
         type='service'
     )
-    content_object.stripe_product_id = product.id
-    content_object.save()
+
     return product.id
 
 
@@ -30,7 +29,7 @@ def create_stripe_session(price):
         success_url="http://127.0.0.1:8000/",
         payment_method_types=['card'],
         line_items=[{
-            "price": price,
+            "price": price.id,
             "quantity": 1,
         }],
         mode="payment"

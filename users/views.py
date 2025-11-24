@@ -1,6 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
-from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import UpdateAPIView, ListAPIView, DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -19,8 +18,8 @@ class PaymentCreateAPIView(CreateAPIView):
         product_id = create_stripe_product(payment.course)
         price = create_stripe_price(payment.amount_pay, product_id)
         session_id, payment_link = create_stripe_session(price)
-        payment.stripe_session_id = session_id
-        payment.link = payment_link
+        payment.session_id = session_id
+        payment.url = payment_link
         payment.save()
 
 
