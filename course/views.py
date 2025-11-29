@@ -1,4 +1,6 @@
 from rest_framework import viewsets, generics, status
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,6 +9,7 @@ from course.models import Course, Lessons, Subscription
 from course.paginators import CourseLessonPaginator
 from course.permissions import IsModer, IsOwner, CanDeleteLesson
 from course.serializers import CourseSerializer, LessonsSerializer
+from course.tasks import send_course_update_notification
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -40,6 +43,11 @@ class CourseViewSet(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context.update({'request': self.request})
         return context
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_course_update_notification.delay(course.id)
+        return course
 
 
 class LessonsCreateAPIView(generics.CreateAPIView):
