@@ -1,0 +1,75 @@
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+      - static_volume:/code/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    environment:
+      HOST: db
+      REDIS_HOST: redis
+
+  db:
+    image: postgres:16.8
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      NAME: ${NAME}
+      USER: ${USER}
+      PASSWORD: ${PASSWORD}
+    env_file:
+      - ./.env
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    env_file:
+      - ./.env
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build:
+      context: .
+    container_name: celery_worker
+    user: "1001"
+    command: celery -A config worker -l INFO
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - web
+      - redis
+
+
+  celery_beat:
+    build:
+      context: .
+    container_name: celery_beat
+    command: celery -A config beat --loglevel=INFO
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - web
+      - redis
+
+
+
+volumes:
+  postgres_data:
+  static_volume:
+  redis_data:
