@@ -8,18 +8,19 @@ class LessonsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lessons
-        fields = '__all__'
+        fields = ['name', 'description', 'video_url']
         validators = [YouTubeURLValidator(field='video_url')]
         
 
 
 class CourseSerializer(serializers.ModelSerializer):
     lessons_count = serializers.SerializerMethodField()
-    lessons = LessonsSerializer(source='lessons_set', many=True)
+    lessons = LessonsSerializer(source='lessons_set', many=True, read_only=True)
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = ['name', 'description', 'lessons_count', 'lessons', 'is_subscribed']
 
     def get_lessons_count(self, obj):
         return obj.lessons_set.count()
