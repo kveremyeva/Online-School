@@ -52,6 +52,7 @@ jobs:
 
     - name: Run migrations
       env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
         POSTGRES_DB: ${{ secrets.NAME }}
         POSTGRES_USER: ${{ secrets.USER }}
         POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
@@ -60,6 +61,7 @@ jobs:
 
     - name: Run tests
       env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
         POSTGRES_DB: ${{ secrets.NAME }}
         POSTGRES_USER: ${{ secrets.USER }}
         POSTGRES_PASSWORD: ${{ secrets.PASSWORD }}
