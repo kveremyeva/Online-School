@@ -10,7 +10,6 @@ class LessonsSerializer(serializers.ModelSerializer):
         model = Lessons
         fields = ['name', 'description', 'video_url']
         validators = [YouTubeURLValidator(field='video_url')]
-        
 
 
 class CourseSerializer(serializers.ModelSerializer):

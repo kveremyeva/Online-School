@@ -25,6 +25,7 @@ def send_course_update_notification(course_id):
             fail_silently=False
         )
 
+
 @shared_task
 def check_last_login():
     """Проверка последнего входа пользователей и отключение неактивных пользователей"""
