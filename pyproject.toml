@@ -1,5 +1,5 @@
 [project]
-name = "online_school"
+name = "online-school"
 version = "0.1.0"
 description = ""
 authors = [
@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "online_school"}]
+packages = [{include = "online-school"}]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
