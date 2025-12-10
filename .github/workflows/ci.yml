@@ -88,10 +88,10 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/online_school:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/online-school:${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/online_school:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/online-school:${{ github.sha }}
 
 
   deploy:
@@ -107,8 +107,8 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/online_school:${{ github.sha }}
-            docker stop online_school || true
-            docker rm online_school || true
-            docker run -d --name online_school -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/online_school:${{ github.sha }}
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/online-school:${{ github.sha }}
+            docker stop online-school || true
+            docker rm online-school || true
+            docker run -d --name online-school -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/online-school:${{ github.sha }}
           EOF
