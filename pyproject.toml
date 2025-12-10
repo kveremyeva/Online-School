@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "online_school"}]
+packages = [{include = "online-school"}]
 
 
 [build-system]
