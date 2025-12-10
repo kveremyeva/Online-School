@@ -6,7 +6,8 @@ class Course(models.Model):
     name = models.CharField(max_length=150, verbose_name='Название')
     preview = models.ImageField(blank=True, null=True, verbose_name='Превью')
     description = models.TextField(verbose_name='Описание')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Владелец')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE, null=True, blank=True, verbose_name='Владелец')
 
     def __str__(self):
         return f'{self.name}'
@@ -22,8 +23,8 @@ class Lessons(models.Model):
     preview = models.ImageField(blank=True, null=True, verbose_name='Превью')
     video_url = models.URLField(verbose_name='Ссылка на видео')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Владелец')
-
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                              null=True, blank=True, verbose_name='Владелец')
 
     def __str__(self):
         return f'{self.name}'
@@ -31,6 +32,7 @@ class Lessons(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+        ordering = ['id']
 
 
 class Subscription(models.Model):

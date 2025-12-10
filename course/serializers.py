@@ -8,9 +8,8 @@ class LessonsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lessons
-        fields = ['name', 'description', 'video_url']
+        fields = ['name', 'description', 'video_url', 'course']
         validators = [YouTubeURLValidator(field='video_url')]
-        
 
 
 class CourseSerializer(serializers.ModelSerializer):

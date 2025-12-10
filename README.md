@@ -108,3 +108,10 @@ docker-compose restart
 ```
 docker-compose down
 ```
+
+## Настройка сервера
+
+### Установка необходимых пакетов
+```bash
+sudo apt update
+sudo apt install python3-pip python3-venv postgresql redis nginx
